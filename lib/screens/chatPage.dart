@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/screens/Contact.dart';
 
 import '../models/chatUsersModel.dart';
 import '../widgets/conversationList.dart';
@@ -46,7 +47,13 @@ class _ChatPageState extends State<ChatPage> {
                         children: <Widget>[
                           Icon(Icons.add,color: Colors.pink,size: 20,),
                           SizedBox(width: 2,),
-                          Text("Add New",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
+                          TextButton(
+                          child: Text("Add New",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold)),
+                          onPressed: (){
+                            Navigator.push(
+                              context,
+                              new MaterialPageRoute(builder: (context) => Contact()),
+                            );                          })
                         ],
                       ),
                     )

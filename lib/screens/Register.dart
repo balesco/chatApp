@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/network_utils/api.dart';
+import 'package:flutter_project/widgets/BottomNavBar.dart';
 import 'package:flutter_project/screens/HomePage.dart';
 import 'package:flutter_project/screens/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,11 +14,11 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
+  var errorMessage;
   var email;
+  var name;
   var password;
-  var fname;
-  var lname;
-  var phone;
+  var password_confirmation;
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -31,6 +32,7 @@ class _RegisterState extends State<Register> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    Text(errorMessage??"",style:TextStyle(color:Colors.red)),
                     Card(
                       elevation: 4.0,
                       color: Colors.white,
@@ -44,7 +46,29 @@ class _RegisterState extends State<Register> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-
+                              TextFormField(
+                                style: TextStyle(color: Color(0xFF000000)),
+                                cursorColor: Color(0xFF9b9b9b),
+                                keyboardType: TextInputType.text,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.insert_emoticon,
+                                    color: Colors.grey,
+                                  ),
+                                  hintText: "Nom & Prénom",
+                                  hintStyle: TextStyle(
+                                      color: Color(0xFF9b9b9b),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                validator: (nameValue) {
+                                  if (nameValue==null||nameValue.isEmpty) {
+                                    return 'Votre Nom SVP!';
+                                  }
+                                  name = nameValue;
+                                  return null;
+                                },
+                              ),
                               TextFormField(
                                 style: TextStyle(color: Color(0xFF000000)),
                                 cursorColor: Color(0xFF9b9b9b),
@@ -56,13 +80,13 @@ class _RegisterState extends State<Register> {
                                   ),
                                   hintText: "Email",
                                   hintStyle: TextStyle(
-                                      color: Color(0xFF9b9b9b),
+                                      color: Colors.grey,
                                       fontSize: 15,
                                       fontWeight: FontWeight.normal),
                                 ),
                                 validator: (emailValue) {
                                   if (emailValue==null || emailValue.isEmpty) {
-                                    return 'Please enter email';
+                                    return 'Entrer votre email SVP!';
                                   }
                                   email = emailValue;
                                   return null;
@@ -72,68 +96,23 @@ class _RegisterState extends State<Register> {
                                 style: TextStyle(color: Color(0xFF000000)),
                                 cursorColor: Color(0xFF9b9b9b),
                                 keyboardType: TextInputType.text,
+                                obscureText:true,
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
-                                    Icons.insert_emoticon,
+                                    Icons.lock,
                                     color: Colors.grey,
                                   ),
-                                  hintText: "First Name",
+                                  hintText: "Mot de passe",
                                   hintStyle: TextStyle(
                                       color: Color(0xFF9b9b9b),
                                       fontSize: 15,
                                       fontWeight: FontWeight.normal),
                                 ),
-                                validator: (firstname) {
-                                  if (firstname==null||firstname.isEmpty) {
-                                    return 'Please enter your first name';
+                                validator: (passwordValue) {
+                                  if (passwordValue==null||passwordValue.isEmpty) {
+                                    return 'Mot de passe obligatoire';
                                   }
-                                  fname = firstname;
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                style: TextStyle(color: Color(0xFF000000)),
-                                cursorColor: Color(0xFF9b9b9b),
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.insert_emoticon,
-                                    color: Colors.grey,
-                                  ),
-                                  hintText: "Last Name",
-                                  hintStyle: TextStyle(
-                                      color: Color(0xFF9b9b9b),
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                validator: (lastname) {
-                                  if (lastname==null||lastname.isEmpty) {
-                                    return 'Please enter your last name';
-                                  }
-                                  lname = lastname;
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                style: TextStyle(color: Color(0xFF000000)),
-                                cursorColor: Color(0xFF9b9b9b),
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.phone,
-                                    color: Colors.grey,
-                                  ),
-                                  hintText: "Phone",
-                                  hintStyle: TextStyle(
-                                      color: Color(0xFF9b9b9b),
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                validator: (phonenumber) {
-                                  if (phonenumber==null||phonenumber.isEmpty) {
-                                    return 'Please enter phone number';
-                                  }
-                                  phone = phonenumber;
+                                  password = passwordValue;
                                   return null;
                                 },
                               ),
@@ -144,10 +123,10 @@ class _RegisterState extends State<Register> {
                                 obscureText: true,
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
-                                    Icons.vpn_key,
+                                    Icons.lock,
                                     color: Colors.grey,
                                   ),
-                                  hintText: "Password",
+                                  hintText: "Confirmation Mot de passe",
                                   hintStyle: TextStyle(
                                       color: Color(0xFF9b9b9b),
                                       fontSize: 15,
@@ -155,9 +134,9 @@ class _RegisterState extends State<Register> {
                                 ),
                                 validator: (passwordValue) {
                                   if (passwordValue==null||passwordValue.isEmpty) {
-                                    return 'Please enter some text';
+                                    return 'Confirmez votre mot de passe!';
                                   }
-                                  password = passwordValue;
+                                  password_confirmation = passwordValue;
                                   return null;
                                 },
                               ),
@@ -168,7 +147,7 @@ class _RegisterState extends State<Register> {
                                     padding: EdgeInsets.only(
                                         top: 8, bottom: 8, left: 10, right: 10),
                                     child: Text(
-                                      _isLoading? 'Proccessing...' : 'Register',
+                                      _isLoading? 'en cours...' : "S'inscrire",
                                       textDirection: TextDirection.ltr,
                                       style: TextStyle(
                                         color: Colors.white,
@@ -232,29 +211,31 @@ class _RegisterState extends State<Register> {
       _isLoading = true;
     });
     var data = {
+      'name': name,
       'email' : email,
       'password': password,
-      'phone': phone,
-      'fname': fname,
-      'lname': lname
+      'password_confirmation': password_confirmation,
     };
-
     var res = await Network().authData(data, '/register');
     var body = json.decode(res.body);
-    if(body['success']){
+    setState(() {
+      _isLoading = false;
+    });
+    if(body['token'] !=null){
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', json.encode(body['token']));
       localStorage.setString('user', json.encode(body['user']));
       Navigator.push(
         context,
         new MaterialPageRoute(
-            builder: (context) => HomePage()
+            builder: (context) => BottomNavBar()
         ),
       );
     }
-
-    setState(() {
-      _isLoading = false;
-    });
+    else{
+      setState((){
+        errorMessage = body['message'];
+      });
+    }
   }
 }
